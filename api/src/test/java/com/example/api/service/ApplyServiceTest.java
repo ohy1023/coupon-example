@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ApplyServiceTest {
@@ -43,7 +42,7 @@ class ApplyServiceTest {
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
-            long userId = 1L;
+            long userId = i;
             executorService.submit(() -> {
                 try {
                     applyService.apply(userId);
@@ -54,6 +53,8 @@ class ApplyServiceTest {
         }
 
         countDownLatch.await();
+
+        Thread.sleep(10000);
 
         long count = couponRepository.count();
 
