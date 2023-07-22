@@ -61,5 +61,34 @@ class ApplyServiceTest {
         assertThat(count).isEqualTo(100);
     }
 
+    @Test
+    public void 한명당_한개의쿠폰만_발급() throws Exception {
+
+        int threadCount = 1000;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
+            long userId = 1;
+            executorService.submit(() -> {
+                try {
+                    applyService.apply(userId);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        countDownLatch.await();
+
+        Thread.sleep(10000);
+
+        long count = couponRepository.count();
+
+        assertThat(count).isEqualTo(1);
+    }
+
 
 }
